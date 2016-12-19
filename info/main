@@ -1,0 +1,206 @@
+Struts2  源码学习
+
+
+配置步骤：
+
+        1,加载基本的依赖jar包，配置web.xml文件。
+
+
+
+                struts2的过滤器
+
+                <filter>
+                    <filter-name>struts2</filter-name>
+                    <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+                </filter>
+                <filter-mapping>
+                    <filter-name>struts2</filter-name>
+                    <url-pattern>/*</url-pattern>
+                </filter-mapping>
+
+
+        2,最好将url-pattern配置为/*，这样该过滤器将拦截所有的请求。实际FilterDispatcher类除了实现Filter接口之外，还实现了StrutsStatics接口，
+          继承代码如下:
+                      public class FilterDispatcher implements StrutsStatics, Filter {}
+
+                        StrutsStatics并没有定义业务方法，只是定义了若干个常量。
+
+
+                        Struts2对常用的接口进行了重新封装，比如HttpServletRequest、HttpServletResponse、HttpServletContext等。
+
+
+
+        3,容器启动后，FilterDispatcher被实例化，调用init(FilterConfig filterConfig)方法。
+            该方法创建Dispatcher实例，并将FilterDispatcherde配置的初始化参数传到对象中，并负责Action的执行。
+
+
+
+
+
+
+        4,读取配置文件的方法：
+                private void init_TraditionalXmlConfigurations() {
+                        String configPaths = (String)this.initParams.get("config");
+                        if(configPaths == null) {
+                            ／／读取配置文件，文件名称必须为以下三种之一。
+                            configPaths = "struts-default.xml,struts-plugin.xml,struts.xml";
+                        }
+
+                        String[] files = configPaths.split("\\s*[,]\\s*");
+                        String[] arr$ = files;
+                        int len$ = files.length;
+
+                        for(int i$ = 0; i$ < len$; ++i$) {
+                            String file = arr$[i$];
+                            if(!file.endsWith(".xml")) {
+                                throw new IllegalArgumentException("Invalid configuration file name");
+                            }
+
+                            if("xwork.xml".equals(file)) {
+                                this.configurationManager.addContainerProvider(this.createXmlConfigurationProvider(file, false));
+                            } else {
+                                this.configurationManager.addContainerProvider(this.createStrutsXmlConfigurationProvider(file, false, this.servletContext));
+                            }
+                        }
+
+                    }
+
+        5,在上面的configurationManager.addConfigurationProvider(createStrutsXmlConfigurationProvider(file, false,servletContext));
+          执行会创建一个下面的类对象。
+
+          public class StrutsXmlConfigurationProvider extends XmlConfigurationProvider {}
+
+          此类继承XmlConfigurationProvider,而XmlConfigurationProvider又实现了接口ConfigurationProvider接口。
+
+          XmlConfigurationProvider负责配置文件的读取和解析，addAction()负责加载Struts2配置文件中的action.
+
+                addAction()方法负责读取<action>标签，并将数据保存在ActionConfig中；
+
+                addResultTypes()方法负责将<result-type>标签转化为ResultTypeConfig对象；
+
+                loadInterceptors()方法负责将<interceptor>标签转化为InterceptorConfi对象；
+
+                loadInterceptorStack()方法负责将<interceptor-ref>标签转化为InterceptorStackConfig对象；
+
+                loadInterceptorStacks()方法负责将<interceptor-stack>标签转化成InterceptorStackConfig对象。
+
+           而上面的方法最终会被addPackage()方法调用，将所读取到的数据汇集到PackageConfig对象中
+
+
+
+
+
+
+        6,当用户想struts2发送请求时，FilterDispatcher的doFilter()方法自动调用，这个方法非常关键。首先，struts2对请求对象进行了重新包装，此次包装根据请求内容的类型不容，返回不同的对象，
+          如果为multipart/form-data类型,则返回StrutsPartRequestWrapper类型的对象，该对象服务于文件上传，否则返回StrutsRequestWrapper类型的对象，前者是后者的子类。代码如下：
+
+           public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+
+
+                   HttpServletRequest request = (HttpServletRequest) req;
+
+                   HttpServletResponse response = (HttpServletResponse) res;
+
+                   ServletContext servletContext = getServletContext();
+
+                   String timerKey = "FilterDispatcher_doFilter: ";
+
+                   try {
+
+                       // FIXME: this should be refactored better to not duplicate work with the action invocation
+
+                       ValueStack stack =dispatcher.getContainer().getInstance(ValueStackFactory.class).createValueStack();
+
+                       ActionContext ctx = new ActionContext(stack.getContext());
+
+                       ActionContext.setContext(ctx);
+
+
+
+                       UtilTimerStack.push(timerKey);
+
+                       request = prepareDispatcherAndWrapRequest(request, response);//重新包装request
+
+                       ActionMapping mapping;
+
+                       try {
+
+                           mapping = actionMapper.getMapping(request, dispatcher.getConfigurationManager());//获取Action的值，一个url对应一个action，如果此action为null则认为无action请求，在后面有判断
+
+                       } catch (Exception ex) {
+
+                           log.error("error getting ActionMapping", ex);
+
+                           dispatcher.sendError(request, response, servletContext, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex);
+
+                           return;
+
+                       }
+
+
+
+                       if (mapping == null) {
+
+                           // there is no action in this request, should we look for a static resource?
+
+                           String resourcePath = RequestUtils.getServletPath(request);
+
+
+
+                           if ("".equals(resourcePath) && null != request.getPathInfo()) {
+
+                               resourcePath = request.getPathInfo();
+
+                           }
+
+                            //如果请求资源以/struts开头，则当做静态资源处理
+
+                           if (staticResourceLoader.canHandle(resourcePath)) {
+
+                               staticResourceLoader.findStaticResource(resourcePath, request, response);
+
+                           } else {
+
+                               // this is a normal request, let it pass through
+
+                               chain.doFilter(request, response);
+
+                           }
+
+                           // The framework did its job here
+
+                           return;
+
+                       }
+
+                            //如果请求资源是action，则调用serviceAction方法
+
+                       dispatcher.serviceAction(request, response, servletContext, mapping);
+
+
+
+                   } finally {
+
+                       dispatcher.cleanUpRequest(request);
+
+                       try {
+
+                           ActionContextCleanUp.cleanUp(req);
+
+                       } finally {
+
+                           UtilTimerStack.pop(timerKey);
+
+                       }
+
+                       devModeOverride.remove();
+
+                   }
+
+               }
+
+           Dispatcher类最重要的一个方法是publicvoid serviceAction(HttpServletRequest request, HttpServletResponse response, ServletContext context,ActionMapping mapping) throws ServletException{}此方法
+
+
+
+

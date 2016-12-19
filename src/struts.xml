@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <package name="action" extends="struts-default" >
+
+
+        <!--最为基本的action-->
+        <action name="FirstAction"  class="action.FirstAction" method="execute">
+            <result name="success" type="redirect">/jsp/result.jsp</result>
+            <result name="error" type="redirect">/jsp/result.jsp</result>
+        </action>
+
+        <!--实现action接口的action-->
+        <action name="implementsAction" class="action.ImplementsAciton" method="execute">
+            <result name="success" type="redirect">/jsp/result.jsp</result>
+            <result name="error" type="redirect">/jsp/result.jsp</result>
+        </action>
+
+        <!--继承com.opensymphony.xwork2.ActionSupport-->
+        <action name="extendAction" class="action.ExtendAction" method="execute">
+            <result name="success" type="redirect">/jsp/result.jsp</result>
+            <result name="error" type="redirect">/jsp/result.jsp</result>
+        </action>
+
+        <!--resultType解析-->
+        <action name="resultTypeAction" class="action.ResultTypeAction" method="execute">
+            <result name="dispatcher" type="dispatcher" >/jsp/result.jsp</result>
+            <result name="freemarker" type="freemarker" >/jsp/result.jsp</result>
+            <result name="httpheader" type="httpheader" >/jsp/result.jsp</result>
+            <result name="stream" type="stream" >/jsp/result.jsp</result>
+            <result name="velocity" type="velocity" >/jsp/result.jsp</result>
+            <result name="xslt" type="xslt" >/jsp/result.jsp</result>
+            <result name="plainText" type="plainText" >/jsp/result.jsp</result>
+            <result name="chain" type="chain" >resultTypeUseAciton</result>
+            <result name="redirect" type="redirect" >/jsp/result.jsp</result>
+            <result name="redirectAction" type="redirectAction" >resultTypeAction</result>
+            <result name="postback" type="postback" >/jsp/result.jsp</result>
+
+        </action>
+
+        <!--辅助resultType解析进行说明-->
+        <action name="resultTypeUseAciton" class="action.ResultTypeUseAciton" method="execute">
+            <result name="success" >/jsp/result.jsp</result>
+        </action>
+    </package>
+
+
+
+</struts>
