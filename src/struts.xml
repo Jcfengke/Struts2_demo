@@ -28,23 +28,63 @@
 
         <!--resultType解析-->
         <action name="resultTypeAction" class="action.ResultTypeAction" method="execute">
+
+            <!--默认的类型-->
             <result name="dispatcher" type="dispatcher" >/jsp/result.jsp</result>
-            <result name="freemarker" type="freemarker" >/jsp/result.jsp</result>
-            <result name="httpheader" type="httpheader" >/jsp/result.jsp</result>
-            <result name="stream" type="stream" >/jsp/result.jsp</result>
+            <!--freemarker-->
+            <result name="freemarker" type="freemarker" >/jsp/freemarker.ftl</result>
+            <!--暂时未搞懂-->
+            <result name="httpheader" type="httpheader" >
+
+            </result>
+
+
+            <result name="stream" type="stream" >
+                <param name="contentType">application/octet-stream</param>
+                <param name="inputName">inputStream</param>
+                <!--默认为 inline(在线打开)，设置为 attachment 将会告诉浏览器下载该文件，filename 指定下载文
+               件保有存时的文件名，若未指定将会是以浏览的页面名作为文件名，如以 download.action 作为文件名，
+               这里使用的是动态文件名，${fileName}, 它将通过 Action 的 getFileName() 获得文件名 -->
+                <param name="contentDisposition" >ttachment;filename="${fileName}"</param>
+                <!-- 输出时缓冲区的大小 -->
+                <param name="bufferSize">1024</param>
+
+            </result>
+            <!--暂存疑问-->
             <result name="velocity" type="velocity" >/jsp/result.jsp</result>
-            <result name="xslt" type="xslt" >/jsp/result.jsp</result>
+            <!--暂存疑问-->
+            <result name="xslt" type="xslt" ></result>
+
+            <!--明天继续-->
             <result name="plainText" type="plainText" >/jsp/result.jsp</result>
             <result name="chain" type="chain" >resultTypeUseAciton</result>
             <result name="redirect" type="redirect" >/jsp/result.jsp</result>
             <result name="redirectAction" type="redirectAction" >resultTypeAction</result>
             <result name="postback" type="postback" >/jsp/result.jsp</result>
 
+
+
+
+
+
+
+
+
+
         </action>
+
+        <action name="resultTypeOtherAction" class="action.ResultTypeOtherAction" method="">
+
+        </action>
+
+
+
+
 
         <!--辅助resultType解析进行说明-->
         <action name="resultTypeUseAciton" class="action.ResultTypeUseAciton" method="execute">
             <result name="success" >/jsp/result.jsp</result>
+
         </action>
     </package>
 

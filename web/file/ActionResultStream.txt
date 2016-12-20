@@ -1,0 +1,8 @@
+1.测试action的resul   type=stream的情况。
+
+
+
+
+
+
+
