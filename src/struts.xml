@@ -48,43 +48,43 @@
                 <param name="contentDisposition" >ttachment;filename="${fileName}"</param>
                 <!-- 输出时缓冲区的大小 -->
                 <param name="bufferSize">1024</param>
-
             </result>
+
+
             <!--暂存疑问-->
             <result name="velocity" type="velocity" >/jsp/result.jsp</result>
-            <!--暂存疑问-->
-            <result name="xslt" type="xslt" ></result>
 
-            <!--明天继续-->
-            <result name="plainText" type="plainText" >/jsp/result.jsp</result>
+
+            <!--暂存疑问-->
+            <result name="xslt" type="xslt" >
+                <param name="exposedValue">doc</param>
+                <param name="location">/file/template.xml</param>
+            </result>
+
+
+            <!--通过out直接输出内容-->
+            <result name="plainText" type="plainText" >
+                <param name="charSet">UTF-8</param>
+                <param name="location">/jsp/result.jsp</param>
+            </result>
+
+            <!--跳转到另一个action-->
             <result name="chain" type="chain" >resultTypeUseAciton</result>
+
+
+
             <result name="redirect" type="redirect" >/jsp/result.jsp</result>
             <result name="redirectAction" type="redirectAction" >resultTypeAction</result>
             <result name="postback" type="postback" >/jsp/result.jsp</result>
-
-
-
-
-
-
-
-
-
-
         </action>
 
         <action name="resultTypeOtherAction" class="action.ResultTypeOtherAction" method="">
-
         </action>
-
-
-
-
 
         <!--辅助resultType解析进行说明-->
         <action name="resultTypeUseAciton" class="action.ResultTypeUseAciton" method="execute">
-            <result name="success" >/jsp/result.jsp</result>
-
+            <interceptor-ref name="defaultStack"></interceptor-ref>
+            <result>/jsp/result.jsp</result>
         </action>
     </package>
 

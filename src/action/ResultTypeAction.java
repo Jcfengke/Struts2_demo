@@ -1,9 +1,11 @@
 package action;
 
 import com.opensymphony.xwork2.ActionContext;
+import org.apache.struts2.ServletActionContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -93,15 +95,40 @@ public class ResultTypeAction {
                 result="velocity";
                 break;
             case 6:
+                action_result="输出类型：xslt  </br>"
+                        +"action的类型："+this.getAction()+"</br>"
+                        +"条件："+"如果报错：Operation not supported   可以创建 template.xml模板文件    "
+                        +"测试结果："+"success";
                 result="xslt";
                 break;
-            /*case 7:
-                result="plainText";
-                break;
+            case 7:
+                action_result="输出类型：plainText  </br>"
+                        +"action的类型："+this.getAction()+"</br>"
+                        +"条件："+""
+                        +"测试结果："+"success";
+                try{
+                    ServletActionContext.getResponse().setContentType ("text/html;charset=utf-8");
+                    PrintWriter out = ServletActionContext.getResponse().getWriter();
+                    out.print(action_result);
+                    out.flush();
+                    out.close();
+                }catch (Exception e){
+                    System.out.println(e.getMessage());
+                }finally {
+                    result="plainText";
+                    break;
+                }
+
             case 8:
+                //Chain:基本用途是构造成一条动作链。前一个动作将控制权转交给后一个动作，而前一个动作的状态在后一个动作里仍然保持着。动作链由Chaining拦截器负责处理，因为这个拦截器是defaultStack拦截器栈的一份子，多以你随时都可以使用动作链。
+                action_result="输出类型：chain  </br>"
+                        +"action的类型："+this.getAction()+"</br>"
+                        +"条件："+"需要额外的aciton配合使用，请详细阅读一下链接的内容：http://blog.csdn.net/randomnet/article/details/8656759  （本地info中的内容）"
+                        +"测试结果："+"success";
+                info="ResultTypeAction数据信息  info："+info;
                 result="chain";
                 break;
-            case 9:
+            /*case 9:
                 result="redirect";
                 break;
             case 10:
