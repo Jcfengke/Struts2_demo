@@ -48,9 +48,9 @@ public class ResultTypeAction {
     public String execute() {
 
         //打印action的名称
-        System.out.println("action:"+action.toString());
+        System.out.println("action:"+action);
         //打印info的信息
-        System.out.println("info:" + info.toString());
+        System.out.println("info:" + info);
 
         //转化成数字
         int number=Integer.parseInt(info);
@@ -116,8 +116,9 @@ public class ResultTypeAction {
                     System.out.println(e.getMessage());
                 }finally {
                     result="plainText";
-                    break;
+
                 }
+                break;
 
             case 8:
                 //Chain:基本用途是构造成一条动作链。前一个动作将控制权转交给后一个动作，而前一个动作的状态在后一个动作里仍然保持着。动作链由Chaining拦截器负责处理，因为这个拦截器是defaultStack拦截器栈的一份子，多以你随时都可以使用动作链。
@@ -128,13 +129,26 @@ public class ResultTypeAction {
                 info="ResultTypeAction数据信息  info："+info;
                 result="chain";
                 break;
-            /*case 9:
+
+            case 9:
+                action_result="输出类型：redirect  </br>"
+                        +"action的类型："+this.getAction()+"</br>"
+                        +"条件："+"需要额外的aciton配合使用,并且action处理完后重定向到一个视图资源（如：jsp页面），请求参数全部丢失，action处理结果也全部丢失。"
+                        +"测试结果："+"success";
                 result="redirect";
+
                 break;
+
+
             case 10:
+                action_result="输出类型：redirectAction  </br>"
+                        +"action的类型："+this.getAction()+"</br>"
+                        +"条件："+"需要额外的aciton配合使用,并且action处理完后重定向到一个视图资源（如：jsp页面），请求参数全部丢失，action处理结果也全部丢失。"
+                        +"测试结果："+"success";
                 result="redirectAction";
                 break;
-            case 11:
+
+            /*case 11:
                 result="postback";
                 break;
 */

@@ -5,11 +5,11 @@
         "http://struts.apache.org/dtds/struts-2.3.dtd">
 
 <struts>
-    <package name="action" extends="struts-default" >
-
+    <constant name="struts.i18n.encoding" value="UTF-8" />
+    <package name="action" extends="struts-default">
 
         <!--最为基本的action-->
-        <action name="FirstAction"  class="action.FirstAction" method="execute">
+        <action name="FirstAction" class="action.FirstAction" method="execute">
             <result name="success" type="redirect">/jsp/result.jsp</result>
             <result name="error" type="redirect">/jsp/result.jsp</result>
         </action>
@@ -30,56 +30,63 @@
         <action name="resultTypeAction" class="action.ResultTypeAction" method="execute">
 
             <!--默认的类型-->
-            <result name="dispatcher" type="dispatcher" >/jsp/result.jsp</result>
+            <result name="dispatcher" type="dispatcher">/jsp/result.jsp</result>
             <!--freemarker-->
-            <result name="freemarker" type="freemarker" >/jsp/freemarker.ftl</result>
+            <result name="freemarker" type="freemarker">/jsp/freemarker.ftl</result>
             <!--暂时未搞懂-->
-            <result name="httpheader" type="httpheader" >
+            <result name="httpheader" type="httpheader">
 
             </result>
 
 
-            <result name="stream" type="stream" >
+            <result name="stream" type="stream">
                 <param name="contentType">application/octet-stream</param>
                 <param name="inputName">inputStream</param>
                 <!--默认为 inline(在线打开)，设置为 attachment 将会告诉浏览器下载该文件，filename 指定下载文
                件保有存时的文件名，若未指定将会是以浏览的页面名作为文件名，如以 download.action 作为文件名，
                这里使用的是动态文件名，${fileName}, 它将通过 Action 的 getFileName() 获得文件名 -->
-                <param name="contentDisposition" >ttachment;filename="${fileName}"</param>
+                <param name="contentDisposition">ttachment;filename="${fileName}"</param>
                 <!-- 输出时缓冲区的大小 -->
                 <param name="bufferSize">1024</param>
             </result>
 
 
             <!--暂存疑问-->
-            <result name="velocity" type="velocity" >/jsp/result.jsp</result>
+            <result name="velocity" type="velocity">/jsp/result.jsp</result>
 
 
             <!--暂存疑问-->
-            <result name="xslt" type="xslt" >
+            <result name="xslt" type="xslt">
                 <param name="exposedValue">doc</param>
                 <param name="location">/file/template.xml</param>
             </result>
 
 
             <!--通过out直接输出内容-->
-            <result name="plainText" type="plainText" >
+            <result name="plainText" type="plainText">
                 <param name="charSet">UTF-8</param>
                 <param name="location">/jsp/result.jsp</param>
             </result>
 
             <!--跳转到另一个action-->
-            <result name="chain" type="chain" >resultTypeUseAciton</result>
+            <result name="chain" type="chain">resultTypeUseAciton</result>
+
+            <!--跳转到另一个action-->
+            <!--中文在控制台不显示-->
+            <result name="redirect" type="redirect">resultTypeUseAciton.action?action_result=${action_result}
+            </result>
+
+            <!--跳转到另一个action-->
+            <result name="redirectAction" type="redirectAction">
+                <param name="actionName">resultTypeUseAciton</param>
+                <param name="encode">true</param>
+                <param name="action_result">${action_result}</param>
+            </result>
 
 
-
-            <result name="redirect" type="redirect" >/jsp/result.jsp</result>
-            <result name="redirectAction" type="redirectAction" >resultTypeAction</result>
-            <result name="postback" type="postback" >/jsp/result.jsp</result>
+            <result name="postback" type="postback">/jsp/result.jsp</result>
         </action>
 
-        <action name="resultTypeOtherAction" class="action.ResultTypeOtherAction" method="">
-        </action>
 
         <!--辅助resultType解析进行说明-->
         <action name="resultTypeUseAciton" class="action.ResultTypeUseAciton" method="execute">
@@ -87,7 +94,6 @@
             <result>/jsp/result.jsp</result>
         </action>
     </package>
-
 
 
 </struts>
