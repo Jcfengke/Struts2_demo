@@ -15,6 +15,5 @@
     <%=request.getSession().getAttribute("action_result")%>
     <h2>本页面的信息</h2>
 
-
 </body>
 </html>

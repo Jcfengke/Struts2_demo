@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+        <package name="model"  namespace="/model" extends="struts-default">
+
+                <action name="redirect" class="action.ModelDrivenAction" method="execute">
+                        <result name="success" >/jsp/result.jsp</result>
+                        <!--<interceptor-ref name="modelDriven"></interceptor-ref>-->
+                        <interceptor-ref name="defaultStack"></interceptor-ref>
+                </action>
+
+        </package>
+
+</struts>
