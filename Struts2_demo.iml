@@ -31,6 +31,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Struts 2-2.3.20.1" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="Tomcat 7.0.57" level="application_server_libraries" />
+    <orderEntry type="library" name="Tomcat 7.0.82" level="application_server_libraries" />
   </component>
 </module>
